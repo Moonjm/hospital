@@ -29,11 +29,16 @@ public class PatientVisit {
     private Code status;
 
     @Builder
-    public PatientVisit(Hospital hospital, Patient patient, LocalDateTime regDate, String statusCode, Code status) {
+    public PatientVisit(Hospital hospital, Patient patient, String statusCode, Code status) {
         this.hospital = hospital;
         this.patient = patient;
-        this.regDate = regDate;
+        this.regDate = LocalDateTime.now();
         this.statusCode = statusCode;
         this.status = status;
+    }
+
+    public void updateStatus(Code status) {
+        this.status = status;
+        this.statusCode = status.getCd();
     }
 }
