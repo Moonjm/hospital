@@ -3,7 +3,6 @@ package com.example.hospital.dto;
 import com.example.hospital.domain.Patient;
 import com.example.hospital.domain.PatientVisit;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -14,8 +13,6 @@ public class PatientDto {
 
     @Data
     public static class InsertPatientRequest {
-        @NotNull
-        private Long hospitalId;
         @Size(max = 45, message = "name은 45글자 이하로 입력해 주세요.")
         @NotBlank(message = "name은 공백일 수 없습니다.")
         private String name;
@@ -26,7 +23,7 @@ public class PatientDto {
 
     @Data
     public static class GetPatientsResponse {
-        private Long patientId;
+        private String patientId;
         private String name;
         private String gender = "모름";
         private String birthDate = "-";
@@ -34,7 +31,7 @@ public class PatientDto {
         private String lastVisit = "-";
 
         public GetPatientsResponse(Patient patient) {
-            this.patientId = patient.getId();
+            this.patientId = patient.getRegistrationNumber();
             this.name = patient.getName();
             if (patient.getGender() != null) {
                 this.gender = patient.getGender().getName();
@@ -53,8 +50,8 @@ public class PatientDto {
 
     @Data
     public static class ModifyPatientRequest {
-        @NotNull
-        private Long patientId;
+        @NotBlank(message = "patientId는 공백일 수 없습니다.")
+        private String patientId;
         @Size(max = 45, message = "name은 45글자 이하로 입력해 주세요.")
         @NotBlank(message = "name은 공백일 수 없습니다.")
         private String name;
@@ -65,18 +62,16 @@ public class PatientDto {
 
     @Data
     public static class GetPatientDetailResponse {
-        private Long patientId;
+        private String patientId;
         private String name;
-        private String registrationNumber;
         private String gender = "모름";
         private String birthDate = "-";
         private String mobileNumber = "-";
         private List<PatientVisitDto> visits;
 
         public GetPatientDetailResponse(Patient patient) {
-            this.patientId = patient.getId();
+            this.patientId = patient.getRegistrationNumber();
             this.name = patient.getName();
-            this.registrationNumber = patient.getRegistrationNumber();
             if (patient.getGender() != null) {
                 this.gender = patient.getGender().getName();
             }

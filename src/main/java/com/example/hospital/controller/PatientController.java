@@ -23,18 +23,19 @@ public class PatientController {
 
     private final PatientService patientService;
 
-    @PostMapping("/v1/patients")
+    @PostMapping("/v1/hospitals/{hospitalId}/patients")
     public ResponseEntity<? extends BasicResponse> insertPatient(
+            @PathVariable("hospitalId") String hospitalId,
             @RequestBody @Validated InsertPatientRequest dto,
             WebRequest webRequest
     ) {
         webRequest.setAttribute("body", dto, RequestAttributes.SCOPE_REQUEST);
-        return ResponseEntity.status(HttpStatus.OK).body(patientService.insertPatient(dto));
+        return ResponseEntity.status(HttpStatus.OK).body(patientService.insertPatient(hospitalId, dto));
     }
 
-    @GetMapping("/v1/patients")
+    @GetMapping("/v1/hospitals/{hospitalId}/patients")
     public ResponseEntity<? extends BasicResponse> getPatients(
-            @RequestParam(value = "hospitalId", required = false, defaultValue = "1") Long hospitalId,
+            @PathVariable("hospitalId") String hospitalId,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") @Min(value = 0) int pageSize,
             @RequestParam(value = "pageNo", required = false, defaultValue = "1") @Min(1) int pageNo,
             @RequestParam(value = "type", required = false, defaultValue = "") String type,
@@ -44,7 +45,7 @@ public class PatientController {
         return ResponseEntity.status(HttpStatus.OK).body(patientService.getPatients(hospitalId, pageable, type, value));
     }
 
-    @PutMapping("/v1/patients")
+    @PutMapping("/v1/hospitals/{hospitalId}/patients")
     public ResponseEntity<? extends BasicResponse> modifyPatient(
             @RequestBody @Validated ModifyPatientRequest dto,
             WebRequest webRequest
@@ -53,17 +54,17 @@ public class PatientController {
         return ResponseEntity.status(HttpStatus.OK).body(patientService.modifyPatient(dto));
     }
 
-    @DeleteMapping("/v1/patients/{id}")
+    @DeleteMapping("/v1/hospitals/{hospitalId}/patients/{id}")
     public ResponseEntity<? extends BasicResponse> deletePatient(
-            @PathVariable("id") Long id
+            @PathVariable("id") String id
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(patientService.deletePatient(id));
     }
 
-    @GetMapping("/v1/patients/{id}")
+    @GetMapping("/v1/hospitals/{hospitalId}/patients/{patientId}")
     public ResponseEntity<? extends BasicResponse> getPatientDetail(
-            @PathVariable("id") Long id,
-            @RequestParam(value = "hospitalId", required = false, defaultValue = "1") Long hospitalId
+            @PathVariable("patientId") String id,
+            @PathVariable("hospitalId") String hospitalId
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(patientService.getPatientDetail(id, hospitalId));
     }

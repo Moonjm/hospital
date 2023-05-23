@@ -1,0 +1,65 @@
+= API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+:toc-title:
+
+== 공통
+
+=== 결과 코드
+
+|===
+|코드|코드명
+
+|1|성공
+|0|오류
+|===
+
+=== 환자 등록
+
+.request
+include::{snippets}/insert-patient/http-request.adoc[]
+include::{snippets}/insert-patient/path-parameters.adoc[]
+include::{snippets}/insert-patient/request-fields.adoc[]
+.response
+include::{snippets}/insert-patient/response-body.adoc[]
+include::{snippets}/insert-patient/response-fields.adoc[]
+
+=== 환자 수정
+
+.request
+include::{snippets}/modify-patient/http-request.adoc[]
+include::{snippets}/modify-patient/request-fields.adoc[]
+.response
+include::{snippets}/modify-patient/response-body.adoc[]
+include::{snippets}/modify-patient/response-fields.adoc[]
+
+=== 환자 삭제
+
+.request
+include::{snippets}/delete-patient/http-request.adoc[]
+include::{snippets}/delete-patient/path-parameters.adoc[]
+.response
+include::{snippets}/delete-patient/response-body.adoc[]
+include::{snippets}/delete-patient/response-fields.adoc[]
+
+=== 환자 조회
+
+.request
+include::{snippets}/get-patient-detail/http-request.adoc[]
+include::{snippets}/get-patient-detail/path-parameters.adoc[]
+.response
+include::{snippets}/get-patient-detail/response-body.adoc[]
+include::{snippets}/get-patient-detail/response-fields.adoc[]
+
+=== 환자 목록 조회
+
+.request
+include::{snippets}/get-patients/http-request.adoc[]
+include::{snippets}/get-patients/path-parameters.adoc[]
+include::{snippets}/get-patients/query-parameters.adoc[]
+.response
+include::{snippets}/get-patients/response-body.adoc[]
+include::{snippets}/get-patients/response-fields.adoc[]

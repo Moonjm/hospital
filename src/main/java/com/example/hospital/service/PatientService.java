@@ -36,14 +36,14 @@ public class PatientService {
     private final PatientCustomRepository patientCustomRepository;
 
     @Transactional
-    public BasicResponse insertPatient(InsertPatientRequest dto) {
-        Hospital findHospital = hospitalRepository.findById(dto.getHospitalId()).orElseThrow(ObjectCollectedException::new);
+    public BasicResponse insertPatient(String hospitalId, InsertPatientRequest dto) {
+        Hospital findHospital = hospitalRepository.findByInstitutionNumber(hospitalId).orElseThrow(ObjectCollectedException::new);
         Code findCode = null;
         if (StringUtils.hasText(dto.getGender())) {
             CodeGroup findCodeGroup = codeGroupRepository.findByCd("성별코드").orElseThrow(ObjectCollectedException::new);
             findCode = codeRepository.findByCodeGroupAndCd(findCodeGroup, dto.getGender()).orElseThrow(ObjectCollectedException::new);
         }
-        patientRepository.save(
+        Patient savePatient = patientRepository.save(
                 Patient.builder()
                         .hospital(findHospital)
                         .name(dto.getName())
@@ -53,11 +53,11 @@ public class PatientService {
                         .mobileNumber(dto.getMobileNumber())
                         .build()
         );
-        return new CommonSuccessResponse<>("SUCCESS");
+        return new CommonSuccessResponse<>(String.valueOf(savePatient.getRegistrationNumber()));
     }
 
-    public BasicResponse getPatients(Long hospitalId, Pageable pageable, String type, String value) {
-        Hospital findHospital = hospitalRepository.findById(hospitalId).orElseThrow(ObjectCollectedException::new);
+    public BasicResponse getPatients(String hospitalId, Pageable pageable, String type, String value) {
+        Hospital findHospital = hospitalRepository.findByInstitutionNumber(hospitalId).orElseThrow(ObjectCollectedException::new);
         Page<Patient> patients = patientCustomRepository.getPatients(pageable, findHospital, type, value);
         List<GetPatientsResponse> content = patients.getContent().stream().map(GetPatientsResponse::new).collect(Collectors.toList());
         return new CommonSuccessResponse<>(new CustomReturnPageDto(patients.getSize(), patients.getNumber(), patients.isFirst(), patients.isLast(),
@@ -66,7 +66,7 @@ public class PatientService {
 
     @Transactional
     public BasicResponse modifyPatient(ModifyPatientRequest dto) {
-        Patient findPatient = patientRepository.findById(dto.getPatientId()).orElseThrow(ObjectCollectedException::new);
+        Patient findPatient = patientRepository.findByRegistrationNumber(dto.getPatientId()).orElseThrow(ObjectCollectedException::new);
         CodeGroup findCodeGroup = codeGroupRepository.findByCd("성별코드").orElseThrow(ObjectCollectedException::new);
         Code findCode = codeRepository.findByCodeGroupAndCd(findCodeGroup, dto.getGender()).orElseThrow(ObjectCollectedException::new);
         findPatient.updatePatient(dto.getName(), findCode, dto.getBirthDate(), dto.getMobileNumber());
@@ -74,15 +74,15 @@ public class PatientService {
     }
 
     @Transactional
-    public BasicResponse deletePatient(Long id) {
-        Patient findPatient = patientRepository.findById(id).orElseThrow(ObjectCollectedException::new);
+    public BasicResponse deletePatient(String id) {
+        Patient findPatient = patientRepository.findByRegistrationNumber(id).orElseThrow(ObjectCollectedException::new);
         patientRepository.delete(findPatient);
         return new CommonSuccessResponse<>("SUCCESS");
     }
 
-    public BasicResponse getPatientDetail(Long id, Long hospitalId) {
-        Hospital findHospital = hospitalRepository.findById(hospitalId).orElseThrow(ObjectCollectedException::new);
-        Patient findPatient = patientRepository.findById(id).orElseThrow(ObjectCollectedException::new);
+    public BasicResponse getPatientDetail(String id, String hospitalId) {
+        Hospital findHospital = hospitalRepository.findByInstitutionNumber(hospitalId).orElseThrow(ObjectCollectedException::new);
+        Patient findPatient = patientRepository.findByRegistrationNumber(id).orElseThrow(ObjectCollectedException::new);
         GetPatientDetailResponse ret = new GetPatientDetailResponse(findPatient);
         ret.setVisits(patientCustomRepository.getPatientVisits(findHospital, findPatient).stream().map(PatientVisitDto::new).collect(Collectors.toList()));
         return new CommonSuccessResponse<>(ret);
