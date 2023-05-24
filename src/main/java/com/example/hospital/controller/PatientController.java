@@ -63,10 +63,10 @@ public class PatientController {
 
     @GetMapping("/v1/hospitals/{hospitalId}/patients/{patientId}")
     public ResponseEntity<? extends BasicResponse> getPatientDetail(
-            @PathVariable("patientId") String id,
-            @PathVariable("hospitalId") String hospitalId
+            @PathVariable("hospitalId") String hospitalId,
+            @PathVariable("patientId") String patientId
     ) {
-        return ResponseEntity.status(HttpStatus.OK).body(patientService.getPatientDetail(id, hospitalId));
+        return ResponseEntity.status(HttpStatus.OK).body(patientService.getPatientDetail(hospitalId, patientId));
     }
 
 }

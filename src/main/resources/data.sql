@@ -28,3 +28,6 @@ values (1, '환자1', '2023052010001', 'M', '1971-01-05', '010-1234-5678', 1),
 insert into patient(hospital_id, name, registration_number)
 values (1, '환자4', '2023052010004'),
        (1, '환자6', '2023052010006');
+
+insert into patient_visit (hospital_id, patient_id, reg_date, status_id, status_code)
+values (1, 2, '2023-05-23 13:00:00', '1', 3)

@@ -6,6 +6,7 @@ import com.example.hospital.domain.Hospital;
 import com.example.hospital.domain.Patient;
 import com.example.hospital.dto.CustomReturnPageDto;
 import com.example.hospital.dto.PatientDto.*;
+import com.example.hospital.exception.OptionalObjectNullException;
 import com.example.hospital.model.response.BasicResponse;
 import com.example.hospital.model.response.CommonSuccessResponse;
 import com.example.hospital.repository.code.CodeGroupRepository;
@@ -13,7 +14,6 @@ import com.example.hospital.repository.code.CodeRepository;
 import com.example.hospital.repository.hospital.HospitalRepository;
 import com.example.hospital.repository.patient.PatientCustomRepository;
 import com.example.hospital.repository.patient.PatientRepository;
-import com.sun.jdi.ObjectCollectedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,11 +37,11 @@ public class PatientService {
 
     @Transactional
     public BasicResponse insertPatient(String hospitalId, InsertPatientRequest dto) {
-        Hospital findHospital = hospitalRepository.findByInstitutionNumber(hospitalId).orElseThrow(ObjectCollectedException::new);
+        Hospital findHospital = hospitalRepository.findByInstitutionNumber(hospitalId).orElseThrow(OptionalObjectNullException::new);
         Code findCode = null;
         if (StringUtils.hasText(dto.getGender())) {
-            CodeGroup findCodeGroup = codeGroupRepository.findByCd("성별코드").orElseThrow(ObjectCollectedException::new);
-            findCode = codeRepository.findByCodeGroupAndCd(findCodeGroup, dto.getGender()).orElseThrow(ObjectCollectedException::new);
+            CodeGroup findCodeGroup = codeGroupRepository.findByCd("성별코드").orElseThrow(OptionalObjectNullException::new);
+            findCode = codeRepository.findByCodeGroupAndCd(findCodeGroup, dto.getGender()).orElseThrow(OptionalObjectNullException::new);
         }
         Patient savePatient = patientRepository.save(
                 Patient.builder()
@@ -57,7 +57,7 @@ public class PatientService {
     }
 
     public BasicResponse getPatients(String hospitalId, Pageable pageable, String type, String value) {
-        Hospital findHospital = hospitalRepository.findByInstitutionNumber(hospitalId).orElseThrow(ObjectCollectedException::new);
+        Hospital findHospital = hospitalRepository.findByInstitutionNumber(hospitalId).orElseThrow(OptionalObjectNullException::new);
         Page<Patient> patients = patientCustomRepository.getPatients(pageable, findHospital, type, value);
         List<GetPatientsResponse> content = patients.getContent().stream().map(GetPatientsResponse::new).collect(Collectors.toList());
         return new CommonSuccessResponse<>(new CustomReturnPageDto(patients.getSize(), patients.getNumber(), patients.isFirst(), patients.isLast(),
@@ -66,23 +66,23 @@ public class PatientService {
 
     @Transactional
     public BasicResponse modifyPatient(ModifyPatientRequest dto) {
-        Patient findPatient = patientRepository.findByRegistrationNumber(dto.getPatientId()).orElseThrow(ObjectCollectedException::new);
-        CodeGroup findCodeGroup = codeGroupRepository.findByCd("성별코드").orElseThrow(ObjectCollectedException::new);
-        Code findCode = codeRepository.findByCodeGroupAndCd(findCodeGroup, dto.getGender()).orElseThrow(ObjectCollectedException::new);
+        Patient findPatient = patientRepository.findByRegistrationNumber(dto.getPatientId()).orElseThrow(OptionalObjectNullException::new);
+        CodeGroup findCodeGroup = codeGroupRepository.findByCd("성별코드").orElseThrow(OptionalObjectNullException::new);
+        Code findCode = codeRepository.findByCodeGroupAndCd(findCodeGroup, dto.getGender()).orElseThrow(OptionalObjectNullException::new);
         findPatient.updatePatient(dto.getName(), findCode, dto.getBirthDate(), dto.getMobileNumber());
         return new CommonSuccessResponse<>("SUCCESS");
     }
 
     @Transactional
     public BasicResponse deletePatient(String id) {
-        Patient findPatient = patientRepository.findByRegistrationNumber(id).orElseThrow(ObjectCollectedException::new);
+        Patient findPatient = patientRepository.findByRegistrationNumber(id).orElseThrow(OptionalObjectNullException::new);
         patientRepository.delete(findPatient);
         return new CommonSuccessResponse<>("SUCCESS");
     }
 
-    public BasicResponse getPatientDetail(String id, String hospitalId) {
-        Hospital findHospital = hospitalRepository.findByInstitutionNumber(hospitalId).orElseThrow(ObjectCollectedException::new);
-        Patient findPatient = patientRepository.findByRegistrationNumber(id).orElseThrow(ObjectCollectedException::new);
+    public BasicResponse getPatientDetail(String hospitalId, String patientId) {
+        Hospital findHospital = hospitalRepository.findByInstitutionNumber(hospitalId).orElseThrow(OptionalObjectNullException::new);
+        Patient findPatient = patientRepository.findByRegistrationNumber(patientId).orElseThrow(OptionalObjectNullException::new);
         GetPatientDetailResponse ret = new GetPatientDetailResponse(findPatient);
         ret.setVisits(patientCustomRepository.getPatientVisits(findHospital, findPatient).stream().map(PatientVisitDto::new).collect(Collectors.toList()));
         return new CommonSuccessResponse<>(ret);

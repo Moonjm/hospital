@@ -63,3 +63,22 @@ include::{snippets}/get-patients/query-parameters.adoc[]
 .response
 include::{snippets}/get-patients/response-body.adoc[]
 include::{snippets}/get-patients/response-fields.adoc[]
+
+=== 환자 방문
+
+.request
+include::{snippets}/insert-visit/http-request.adoc[]
+include::{snippets}/insert-visit/path-parameters.adoc[]
+.response
+include::{snippets}/insert-visit/response-body.adoc[]
+include::{snippets}/insert-visit/response-fields.adoc[]
+
+=== 환자 방문 상태 변경
+
+.request
+include::{snippets}/modify-visit/http-request.adoc[]
+include::{snippets}/modify-visit/path-parameters.adoc[]
+include::{snippets}/modify-visit/request-fields.adoc[]
+.response
+include::{snippets}/modify-visit/response-body.adoc[]
+include::{snippets}/modify-visit/response-fields.adoc[]
